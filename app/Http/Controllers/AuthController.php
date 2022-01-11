@@ -17,6 +17,10 @@ class AuthController extends Controller
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
+            'phone' => $request->input('phone'),
+            'userid' => $request->input('userid'),
+            'church' => $request->input('church'),
+            'officer' => $request->input('officer'),
         ]);
     }
 
