@@ -13,6 +13,15 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        $u = User::select('email')->where('email', $request->input('email'))->first();
+        if($u) return response(['field' => 'email', 'message' => '이메일 주소가 사용중입니다!']);
+
+        $u = User::select('phone')->where('phone', $request->input('phone'))->first();
+        if($u) return response(['field' => 'phone', 'message' => '휴대폰 번호가 사용중입니다!']);
+
+        $u = User::select('userid')->where('userid', $request->input('userid'))->first();
+        if($u) return response(['field' => 'userid', 'message' => '영문 아이디가 사용중입니다!']);
+
         return User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
