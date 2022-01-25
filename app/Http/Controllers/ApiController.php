@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
+    use ResponseTrait, ModuleTrait;
     protected $module_name;
     protected $model;
-
-    public function storeContact(Request $request){
-
-    }
 
     public function index($module_name){
         try {
@@ -44,44 +43,21 @@ class ApiController extends Controller
         }
     }
 
-    protected function errorResponse($e){
-        return $this->res([], false, $e);
-    }
+    public function storeContact(Request $request)
+    {
+        $v = Validator::make($request->all(), [
+            'name' => 'required|min:2|max:50',
+            'email' => 'required|min:2|max:50|email',
+            'mobile' => 'required|min:5|max:20',
+            'message' => 'required|min:2|max:500',
+        ]);
 
-    protected function successWithdata($data){
-        return $this->res($data, true, 'here what we found in ' . $this->module_name);
-    }
-
-    protected function youCantAccess(){
-        return $this->res([], false, 'you can not access this module');
-    }
-
-    protected function res($data = [], $status = true, $message = ''){
-        $data = [
-            'payload' => $data,
-            'status' => $status,
-            'message' => $message
-        ];
-        return response()->json($data);
-    }
-
-    protected function setModuleName($module_name){
-        $this->module_name = $module_name;
-    }
-
-    protected function initModel(){
-        $module = \Str::lower($this->module_name);
-        $module = \Str::singular($module);
-        $module = \Str::camel($module);
-        $module = \Str::ucfirst($module);
-        if(in_array($module, $this->expectModules())){
-            return false;
+        if ($v->fails()) {
+            return $this->res($v->errors(), false, 'we get an error');
         }
-        $namespace = 'App\\'.$module;
-        $this->model = new $namespace;
+
+        Contact::create($request->all());
+        return $this->res([], true, 'thanks for send your message we will back soon');
     }
 
-    protected function expectModules(){
-        return ['Contact'];
-    }
 }
