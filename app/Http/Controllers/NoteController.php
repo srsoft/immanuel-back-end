@@ -9,8 +9,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class NoteController extends Controller
 {
-    public function index(){
-        $data = Note::with(['user'])->orderBy('id', 'desc')->paginate(10);
+    public function index(Request $request){
+        // $allAnimals = Animal::with(['user'])->where('user_id', $request->user_id)->get()->sortByDesc('id');
+        $data = Note::with(['user'])->where('user_id', $request->user_id)->orderBy('id', 'desc')->paginate(10);
         return $this->res($data, true, 'index success');
     }
 
@@ -27,14 +28,28 @@ class NoteController extends Controller
         $v = Validator::make($request->all(), [
             'user_id' => 'required',
             'title' => 'required|min:2|max:50',
-            'context' => 'nullable|min:2|max:225',
+            'context' => 'min:2',
+            'image' => 'image',
         ]);
 
         if ($v->fails()) {
             return $this->res($v->errors(), false, 'we get an error');
         }
 
-        Note::create($request->all());
+//        Note::create($request->all());
+
+        if($request->file('image')) {
+            $pathToFile = $request->file('image')->store('notes', 'public');
+        } else {
+            $pathToFile = '';
+        }
+
+        Note::create([
+            'user_id' => $request->user_id,
+            'title' => $request->title,
+            'context' => $request->context,
+            'image' => $pathToFile,
+        ]);
         return $this->res([], true, 'store success');
     }
 
