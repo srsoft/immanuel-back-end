@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\PreparationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,13 @@ Route::get('notes/{id}', [NoteController::class, 'show'])->name('notes.show');
 Route::post('notes', [NoteController::class, 'store'])->name('notes.store');
 Route::put('notes/{note}', [NoteController::class, 'update'])->name('notes.update');
 Route::delete('notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
+
+// Preparations
+Route::get('preparations', [PreparationController::class, 'index'])->name('preparations.index');
+Route::get('preparations/{id}', [PreparationController::class, 'show'])->name('preparations.show');
+Route::post('preparations', [PreparationController::class, 'store'])->name('preparations.store');
+Route::put('preparations/{preparation}', [PreparationController::class, 'update'])->name('preparations.update');
+Route::delete('preparations/{preparation}', [PreparationController::class, 'destroy'])->name('preparations.destroy');
 
 
 
